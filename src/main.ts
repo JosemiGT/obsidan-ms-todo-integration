@@ -1,13 +1,16 @@
 import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { CustomSetting } from './CustomSetting';
 
 // Remember to rename these classes and interfaces!
 
 interface MyPluginSettings {
 	mySetting: string;
+	myBooleanSetting: boolean
 }
 
 const DEFAULT_SETTINGS: MyPluginSettings = {
-	mySetting: 'default'
+	mySetting: 'default',
+	myBooleanSetting: true
 }
 
 export default class MyPlugin extends Plugin {
@@ -19,7 +22,7 @@ export default class MyPlugin extends Plugin {
 		// This creates an icon in the left ribbon.
 		const ribbonIconEl = this.addRibbonIcon('dice', 'Sample Plugin', (evt: MouseEvent) => {
 			// Called when the user clicks the icon.
-			new Notice('This is a notice!');
+			new Notice('This is a notice!' + this.settings.myBooleanSetting);
 		});
 		// Perform additional things with the ribbon
 		ribbonIconEl.addClass('my-plugin-ribbon-class');
@@ -133,5 +136,15 @@ class SampleSettingTab extends PluginSettingTab {
 					this.plugin.settings.mySetting = value;
 					await this.plugin.saveSettings();
 				}));
+		
+		new Setting(containerEl)
+		.setName('Setting #2')
+		.setDesc('It\'s a secret boolean')
+		.addToggle(toggle => toggle
+			.setValue(this.plugin.settings.myBooleanSetting)
+			.onChange(async(value) => {
+				this.plugin.settings.myBooleanSetting = value;
+				await this.plugin.saveSettings();
+			}))
 	}
 }
